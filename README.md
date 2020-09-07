@@ -1,5 +1,5 @@
 <!-- ABOUT THE PROJECT -->
-## About Secure Text Transfer
+## About qutem
 
 qutem (**qu**ick **tem**plate engine) is a simple template engine to perform one functionality: replacing placeholders with file contents.
 
