@@ -42,7 +42,7 @@ Please note that the contents of the dist directory is removed completely when r
 
 ### History
 
-I could not find a simple template engine running in a terminalallowing me to replace placeholders with file contents, so I decided to create my own.
+I could not find a simple template engine running in a terminal allowing me to replace placeholders with file contents, so I decided to create my own.
 
 ### Project structure
 
