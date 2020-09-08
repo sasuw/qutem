@@ -5,38 +5,73 @@ qutem (**qu**ick **tem**plate engine) is a simple template engine to perform one
 
 ### Usage
 
-Suppose you have index.html with the following content
+In the file, where you want content to be inserted, insert a snippet like this
 
-    <html>
-        <head>
-        </head>
-    //(...)
+{{!file.txt}}
 
-and a header.html file with the following content
+and the placeholder will be replaced with the content of the file. The file path is relative to the directory where qutem is executed. 
 
-    <title>This is the title from header.html</title>
+If the placeholder is within an HTML or JavaScript comment without other text content, the comment part is removed when the placeholder is substituted. This enables you to put placeholders in your files without creating errors when using the files before running qutem. See example below for a demonstration.
 
-You want to insert the  contents of the header.html file to index.html file.
+#### Usage example
 
-You modify the index.html thusly:
+Suppose you have a file index.html with the following content
 
-    <html>
-        <head>
-            {{!header.html}}
-        </head>
-    //(...)
+    <!DOCTYPE html>
+    <html lang="en">
+    
+    <head>
+        <!-- Below is the title text placeholder, which qutem will replace -->
+    	<title>{{!title.txt}}</title>
+    	<script>
+    		//Below is the header template placeholder, which qutem will replace
+    		//{{!header.js}}
+    	</script>
+        
+    </head>
+    <body>
+    	<!-- Below is the body template placeholder, which qutem will replace -->
+        <!--{{!body.html}}-->
+    </body>
+    </html>
 
-and run
+and the following three files with their respective contents
+
+<u>title.txt:</u>
+
+    Title of test page
+
+<u>header.js:</u>
+
+    console.log('hello qutem');
+
+<u>body.html:</u>
+
+    <p>This is the body</p>
+
+You want to insert the contents of the three files into index.html where the respective placeholders are.
+
+You run
 
     qutem index.html
 
 Now you have a new file dist/index.html with the following content
 
-    <html>
-        <head>
-            <title>This is the title from header.html</title>
-        </head>
-    //(...)
+    !DOCTYPE html>
+    <html lang="en">
+    
+    <head>
+    	<title>Title of test page</title>
+    	<script>
+    		//Below is the header template placeholder, which qutem will replace
+    		console.log('hello qutem');
+    	</script>
+        
+    </head>
+    <body>
+    	<!-- Below is the body template placeholder, which qutem will replace -->
+        <p>This is the body</p>
+    </body>
 
 Please note that the contents of the dist directory is removed completely when running qutem, so that the dist directory contains only the new file.
 
