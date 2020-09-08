@@ -2,6 +2,18 @@ import 'dart:io';
 
 var verboseLogging = false;
 
+class PlaceHolder {
+  RegExp regExp;
+  int charsToCutBefore;
+  int charsToCutAfter;
+
+  PlaceHolder(RegExp regExp, int charsToCutBefore, int charsToCutAfter) {
+    this.regExp = regExp;
+    this.charsToCutBefore = charsToCutBefore;
+    this.charsToCutAfter = charsToCutAfter;
+  }
+}
+
 void main(List<String> args) async {
   var filePath;
 
@@ -20,32 +32,56 @@ void main(List<String> args) async {
     var file = File(filePath);
     var fileContent = file.readAsStringSync();
 
-    var re = RegExp(r'({{!.*}})');
+    var htmlCommentedOutPlaceHolder =
+        PlaceHolder(RegExp(r'(<!--\s?{{!.*}}\s?-->)'), 7, 5);
+    var jsCommentedOutPlaceHolder =
+        PlaceHolder(RegExp(r'(\/\/\s?{{!.*}})'), 5, 2);
+    var regularPlaceHolder = PlaceHolder(RegExp(r'({{!.*}})'), 3, 2);
 
-    Iterable matches = re.allMatches(fileContent);
-    var newFileContent = fileContent;
-    matches.forEach((match) {
-      newFileContent = newFileContent.replaceAllMapped(re, (match) {
-        var matchStr = newFileContent.substring(match.start, match.end);
-        var rfp = matchStr.substring(3, matchStr.length - 2);
-        var rFile = File(rfp);
-        if (!rFile.existsSync()) {
-          return matchStr;
-        }
-        var rFileContent = rFile.readAsStringSync();
-        return rFileContent;
-      });
-    });
+    fileContent = applyTemplate(fileContent, htmlCommentedOutPlaceHolder);
+    fileContent = applyTemplate(fileContent, jsCommentedOutPlaceHolder);
+    fileContent = applyTemplate(fileContent, regularPlaceHolder);
 
-    if (Directory('dist').existsSync()) {
-      Directory('dist').deleteSync(recursive: true);
-    }
-    var distFilePath = 'dist' + Platform.pathSeparator + filePath;
-    File(distFilePath).createSync(recursive: true);
-    var distFile = File(distFilePath);
-    distFile.writeAsStringSync(newFileContent);
+    prepareDestinationDirectory();
+    writeChangedFile(filePath, fileContent);
   } on Exception catch (e) {
     stdout.writeln('Error.' + e.toString());
+    exit(1);
+  }
+}
+
+String applyTemplate(String fileContent, PlaceHolder placeHolder) {
+  var re = placeHolder.regExp;
+
+  Iterable matches = re.allMatches(fileContent);
+  var newFileContent = fileContent;
+  matches.forEach((match) {
+    newFileContent = newFileContent.replaceAllMapped(re, (match) {
+      var matchStr = newFileContent.substring(match.start, match.end);
+      var rfp = matchStr.substring(placeHolder.charsToCutBefore,
+          matchStr.length - placeHolder.charsToCutAfter);
+      var rFile = File(rfp);
+      if (!rFile.existsSync()) {
+        return matchStr;
+      }
+      var rFileContent = rFile.readAsStringSync();
+      return rFileContent;
+    });
+  });
+
+  return newFileContent;
+}
+
+void writeChangedFile(String filePath, String newFileContent) {
+  var distFilePath = 'dist' + Platform.pathSeparator + filePath;
+  File(distFilePath).createSync(recursive: true);
+  var distFile = File(distFilePath);
+  distFile.writeAsStringSync(newFileContent);
+}
+
+void prepareDestinationDirectory() {
+  if (Directory('dist').existsSync()) {
+    Directory('dist').deleteSync(recursive: true);
   }
 }
 
