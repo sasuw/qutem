@@ -3,6 +3,20 @@
 
 qutem (**qu**ick **tem**plate engine) is a simple template engine to perform one functionality: replacing placeholders with file contents.
 
+### History
+
+I could not find a simple template engine running in a terminal allowing me to replace placeholders with file contents, so I decided to create my own.
+
+## Getting started as user
+
+### Downloads
+
+You can download the latest release from here: [https://github.com/sasuw/qutem/releases](https://github.com/sasuw/qutem/releases)
+
+### Installing
+
+Unpack the tar.gz or zip file and execute the qutem from your terminal or command line window. For a more permanent installation, copy qutem e.g. to /usr/local/bin (Linux/MacOS) or to C:\Windows\system32 (Windows).
+
 ### Usage
 
 In the file, where you want content to be inserted, insert a snippet like this
@@ -61,6 +75,7 @@ Now you have a new file dist/index.html with the following content
     <html lang="en">
     
     <head>
+        <!-- Below is the title text placeholder, which qutem will replace -->
     	<title>Title of test page</title>
     	<script>
     		//Below is the header template placeholder, which qutem will replace
@@ -75,24 +90,15 @@ Now you have a new file dist/index.html with the following content
 
 Please note that the contents of the dist directory is removed completely when running qutem, so that the dist directory contains only the new file.
 
-### History
-
-I could not find a simple template engine running in a terminal allowing me to replace placeholders with file contents, so I decided to create my own.
-
-### Project structure
-
-Standard dart project structure created with [pub](https://dart.dev/tools/pub/cmd), see [https://dart.dev/tools/pub/package-layout](https://dart.dev/tools/pub/package-layout)
-
-### Built With
-
-* [dart](https://dart.dev)
-
-<!-- GETTING STARTED -->
-## Getting Started
+## Getting started as developer
 
 ### Prerequisites
 
 Dart is installed. See [https://dart.dev/get-dart](https://dart.dev/get-dart)
+
+### Project structure
+
+Standard dart project structure created with [pub](https://dart.dev/tools/pub/cmd), see [https://dart.dev/tools/pub/package-layout](https://dart.dev/tools/pub/package-layout)
 
 <!-- CONTRIBUTING -->
 ## Contributing
@@ -113,6 +119,9 @@ When you decide to commit some code:
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
+### Built With
+
+* [dart](https://dart.dev)
 
 <!-- LICENSE -->
 ## License
