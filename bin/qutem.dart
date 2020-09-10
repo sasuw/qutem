@@ -1,20 +1,15 @@
 import 'dart:io';
+import 'package:args/args.dart';
+import 'package:path/path.dart';
+import 'package:yaml/yaml.dart';
+
+import 'package:qutem/fileTemplateEngine.dart';
 
 var verboseLogging = false;
 
-class PlaceHolder {
-  RegExp regExp;
-  int charsToCutBefore;
-  int charsToCutAfter;
+const arg_version = 'version';
 
-  PlaceHolder(RegExp regExp, int charsToCutBefore, int charsToCutAfter) {
-    this.regExp = regExp;
-    this.charsToCutBefore = charsToCutBefore;
-    this.charsToCutAfter = charsToCutAfter;
-  }
-}
-
-void main(List<String> args) async {
+void main(List<String> args) {
   var filePath;
 
   if (args.isEmpty) {
@@ -26,63 +21,32 @@ void main(List<String> args) async {
     filePath = args[0];
   }
 
-  try {
-    log('Input file: ' + filePath);
-
-    var file = File(filePath);
-    var fileContent = file.readAsStringSync();
-
-    var htmlCommentedOutPlaceHolder =
-        PlaceHolder(RegExp(r'(<!--\s?{{!.*}}\s?-->)'), 7, 5);
-    var jsCommentedOutPlaceHolder =
-        PlaceHolder(RegExp(r'(\/\/\s?{{!.*}})'), 5, 2);
-    var regularPlaceHolder = PlaceHolder(RegExp(r'({{!.*}})'), 3, 2);
-
-    fileContent = applyTemplate(fileContent, htmlCommentedOutPlaceHolder);
-    fileContent = applyTemplate(fileContent, jsCommentedOutPlaceHolder);
-    fileContent = applyTemplate(fileContent, regularPlaceHolder);
-
-    prepareDestinationDirectory();
-    writeChangedFile(filePath, fileContent);
-  } on Exception catch (e) {
-    stdout.writeln('Error.' + e.toString());
-    exit(1);
+  final parser = ArgParser()..addFlag(arg_version, negatable: false, abbr: 'v');
+  var argResults = parser.parse(args);
+  if (argResults[arg_version]) {
+    var version = getAppVersion();
+    stdout.writeln('qutem ' + version + ' (quick template engine)');
+    exit(0);
   }
+
+  FileTemplateEngine.run(filePath);
 }
 
-String applyTemplate(String fileContent, PlaceHolder placeHolder) {
-  var re = placeHolder.regExp;
-
-  Iterable matches = re.allMatches(fileContent);
-  var newFileContent = fileContent;
-  matches.forEach((match) {
-    newFileContent = newFileContent.replaceAllMapped(re, (match) {
-      var matchStr = newFileContent.substring(match.start, match.end);
-      var rfp = matchStr.substring(placeHolder.charsToCutBefore,
-          matchStr.length - placeHolder.charsToCutAfter);
-      var rFile = File(rfp);
-      if (!rFile.existsSync()) {
-        return matchStr;
-      }
-      var rFileContent = rFile.readAsStringSync();
-      return rFileContent;
-    });
-  });
-
-  return newFileContent;
-}
-
-void writeChangedFile(String filePath, String newFileContent) {
-  var distFilePath = 'dist' + Platform.pathSeparator + filePath;
-  File(distFilePath).createSync(recursive: true);
-  var distFile = File(distFilePath);
-  distFile.writeAsStringSync(newFileContent);
-}
-
-void prepareDestinationDirectory() {
-  if (Directory('dist').existsSync()) {
-    Directory('dist').deleteSync(recursive: true);
+String getAppVersion() {
+  var ps = Platform.script;
+  var psRunTimeType = ps.runtimeType.toString();
+  if (psRunTimeType == '_DataUri') {
+    //code execution when running pub test
+    return '(version cannot be determined)';
   }
+  var pathToYaml =
+      join(dirname(Platform.script.toFilePath()), '../pubspec.yaml');
+  var f = File(pathToYaml);
+  var yamlText = f.readAsStringSync();
+  var yaml = loadYaml(yamlText);
+
+  var version = yaml['version'];
+  return version;
 }
 
 void log(String msg) {
