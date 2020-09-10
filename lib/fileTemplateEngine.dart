@@ -4,27 +4,30 @@ import 'package:logging/logging.dart';
 import 'package:qutem/templateEngine.dart';
 import 'package:qutem/fileHandler.dart';
 
-class PlaceHolder {
-  RegExp regExp;
-  int charsToCutBefore;
-  int charsToCutAfter;
-
-  PlaceHolder(RegExp regExp, int charsToCutBefore, int charsToCutAfter) {
-    this.regExp = regExp;
-    this.charsToCutBefore = charsToCutBefore;
-    this.charsToCutAfter = charsToCutAfter;
-  }
-}
-
 class FileTemplateEngine {
   static final _logger = Logger('FileTemplateEngine');
+
+  /// Replaces each placeholder marked with the
+  /// given placeholderName with the text
+  /// read from the placeholder file. If
+  /// the file was not found, the given matchStr
+  /// (placeholder plus surrounding characters)
+  /// is returned, effectively making no modifications.
+  static String doReplacePlaceHolder(placeholderName, matchStr) {
+    var rFile = File(placeholderName);
+    if (!rFile.existsSync()) {
+      //file not found, we're not replacing anything
+      return matchStr;
+    }
+    return rFile.readAsStringSync();
+  }
 
   static void run(filePath) {
     try {
       _logger.fine('Input file: ' + filePath);
 
-      var file = File(filePath);
-      var fileContent = file.readAsStringSync();
+      var inputFile = File(filePath);
+      var inputFileContent = inputFile.readAsStringSync();
 
       var htmlCommentedOutPlaceHolder =
           PlaceHolder(RegExp(r'(<!--\s?{{!.*}}\s?-->)'), 7, 5);
@@ -32,40 +35,17 @@ class FileTemplateEngine {
           PlaceHolder(RegExp(r'(\/\/\s?{{!.*}})'), 5, 2);
       var regularPlaceHolder = PlaceHolder(RegExp(r'({{!.*}})'), 3, 2);
 
-      fileContent = FileTemplateEngine.applyTemplate(
-          fileContent, htmlCommentedOutPlaceHolder);
-      fileContent = FileTemplateEngine.applyTemplate(
-          fileContent, jsCommentedOutPlaceHolder);
-      fileContent =
-          FileTemplateEngine.applyTemplate(fileContent, regularPlaceHolder);
+      inputFileContent = TemplateEngine.applyTemplate(
+          inputFileContent, htmlCommentedOutPlaceHolder, doReplacePlaceHolder);
+      inputFileContent = TemplateEngine.applyTemplate(
+          inputFileContent, jsCommentedOutPlaceHolder, doReplacePlaceHolder);
+      inputFileContent = TemplateEngine.applyTemplate(
+          inputFileContent, regularPlaceHolder, doReplacePlaceHolder);
 
-      TemplateEngine.prepareDestinationDirectory();
-      FileHandler.writeChangedFile(filePath, fileContent);
+      FileHandler.writeChangedFile(filePath, inputFileContent);
     } on Exception catch (e) {
       stdout.writeln('Error.' + e.toString());
       exit(1);
     }
-  }
-
-  static String applyTemplate(String fileContent, PlaceHolder placeHolder) {
-    var re = placeHolder.regExp;
-
-    Iterable matches = re.allMatches(fileContent);
-    var newFileContent = fileContent;
-    matches.forEach((match) {
-      newFileContent = newFileContent.replaceAllMapped(re, (match) {
-        var matchStr = newFileContent.substring(match.start, match.end);
-        var rfp = matchStr.substring(placeHolder.charsToCutBefore,
-            matchStr.length - placeHolder.charsToCutAfter);
-        var rFile = File(rfp);
-        if (!rFile.existsSync()) {
-          return matchStr;
-        }
-        var rFileContent = rFile.readAsStringSync();
-        return rFileContent;
-      });
-    });
-
-    return newFileContent;
   }
 }

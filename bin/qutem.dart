@@ -3,6 +3,7 @@ import 'package:args/args.dart';
 import 'package:path/path.dart';
 import 'package:yaml/yaml.dart';
 
+import 'package:qutem/templateEngine.dart';
 import 'package:qutem/fileTemplateEngine.dart';
 
 var verboseLogging = false;
@@ -29,6 +30,7 @@ void main(List<String> args) {
     exit(0);
   }
 
+  TemplateEngine.prepareDestinationDirectory();
   FileTemplateEngine.run(filePath);
 }
 
