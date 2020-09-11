@@ -1,11 +1,11 @@
 <!-- ABOUT THE PROJECT -->
 # About qutem
 
-qutem (**qu**ick **tem**plate engine) is a simple template engine for creating static, internationalized websites.
+qutem (**qu**ick **tem**plate engine) is a simple template engine for creating static, internationalized websites. It runs as a single executable program on your Linux, Mac or Windows.
 
 ## Why?
 
-I could not find a simple template engine running in a terminal allowing me to replace placeholders with file contents, so I decided to create my own. A few days later I wanted to create internationalized pages from a template file, so I added that functionality as well.
+I could not find a simple template engine running in a terminal allowing me to replace placeholders with file contents, so I decided to create my own. A while later I wanted to create internationalized pages from a template file as well, so I added that functionality.
 
 # Getting started as user
 
@@ -27,7 +27,7 @@ There are two things qutem can do:
 
 In the file, where you want content to be inserted, insert a snippet like this
 
-{{!file.txt}}
+    {{!file.txt}}
 
 and the placeholder will be replaced with the content of the file. The file path is relative to the directory where qutem is executed. 
 
@@ -43,11 +43,6 @@ Suppose you have a file index.html with the following content
     <head>
         <!-- Below is the title text placeholder, which qutem will replace -->
     	<title>{{!title.txt}}</title>
-    	<script>
-    		//Below is the header template placeholder, which qutem will replace
-    		//{{!header.js}}
-    	</script>
-        
     </head>
     <body>
     	<!-- Below is the body template placeholder, which qutem will replace -->
@@ -55,21 +50,17 @@ Suppose you have a file index.html with the following content
     </body>
     </html>
 
-and the following three files with their respective contents
+and the following two files with their respective contents
 
 <u>title.txt:</u>
 
     Title of test page
 
-<u>header.js:</u>
-
-    console.log('hello qutem');
-
 <u>body.html:</u>
 
     <p>This is the body</p>
 
-You want to insert the contents of the three files into index.html where the respective placeholders are.
+You want to insert the contents of these two files into index.html where the respective placeholders are.
 
 You run
 
@@ -82,19 +73,12 @@ Now you have a new file dist/index.html with the following content
     
     <head>
         <!-- Below is the title text placeholder, which qutem will replace -->
-    	<title>Title of test page</title>
-    	<script>
-    		//Below is the header template placeholder, which qutem will replace
-    		console.log('hello qutem');
-    	</script>
-        
+    	<title>Title of test page</title>        
     </head>
     <body>
     	<!-- Below is the body template placeholder, which qutem will replace -->
         <p>This is the body</p>
     </body>
-
-Please note that the contents of the dist directory is removed completely when running qutem, so that the dist directory contains only the new file.
 
 ### 2. Create multiple files from one content file and one template file
 
@@ -108,7 +92,7 @@ and a template file with placeholder values like this
     placeholder.de=Platzhalter
     placeholder.it=segnaposto
 
-Running qutem results in three files in three directories "en", "de" and "it" containing the respective file with the string "{{placeHolder}}" replaced with "placeholder", "Platzhalter" and "segnaposto".
+Running qutem results in three files in three directories "en", "de" and "it" containing the respective files with the string "{{placeHolder}}" replaced with "placeholder", "Platzhalter" and "segnaposto".
 
 # Getting started as developer
 
@@ -119,6 +103,19 @@ Dart is installed. See [https://dart.dev/get-dart](https://dart.dev/get-dart)
 ## Project structure
 
 Standard dart project structure created with [pub](https://dart.dev/tools/pub/cmd), see [https://dart.dev/tools/pub/package-layout](https://dart.dev/tools/pub/package-layout)
+
+The main executable, qutem.dart is located in the bin directory. The internal libraries used by qutem are in the lib directory.
+
+The tests are in the test directory and the test data is in the test/data directory.
+
+## Running the code
+
+When you are in the project root directory, you can execute
+
+    dart bin/qutem.dart
+
+to run the program. For debugging, you can use e.g. [Visual Studio Code](https://code.visualstudio.com/).
+
 
 # Miscellaneous
 
