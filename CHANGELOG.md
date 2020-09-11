@@ -1,3 +1,7 @@
+## 0.3.0, September 8th, 2020
+
+- Support for internationalized template files
+
 ## 0.2.0, September 8th, 2020
 
 - Placeholders now work as intended within HTML or JavaScript comments

@@ -1,23 +1,29 @@
 <!-- ABOUT THE PROJECT -->
-## About qutem
+# About qutem
 
-qutem (**qu**ick **tem**plate engine) is a simple template engine to perform one functionality: replacing placeholders with file contents.
+qutem (**qu**ick **tem**plate engine) is a simple template engine for creating static, internationalized websites.
 
-### History
+## Why?
 
-I could not find a simple template engine running in a terminal allowing me to replace placeholders with file contents, so I decided to create my own.
+I could not find a simple template engine running in a terminal allowing me to replace placeholders with file contents, so I decided to create my own. A few days later I wanted to create internationalized pages from a template file, so I added that functionality as well.
 
-## Getting started as user
+# Getting started as user
 
-### Downloads
+## Downloads
 
 You can download the latest release from here: [https://github.com/sasuw/qutem/releases](https://github.com/sasuw/qutem/releases)
 
-### Installing
+## Installing
 
 Unpack the tar.gz or zip file and execute the qutem from your terminal or command line window. For a more permanent installation, copy qutem e.g. to /usr/local/bin (Linux/MacOS) or to C:\Windows\system32 (Windows).
 
-### Usage
+## Usage and functionality
+
+There are two things qutem can do:  
+ 1. replace placeholders with file contents (i.e. inserting files into files)  
+ 2. create multiple files from one content file and one template file, e.g. for different languages
+
+### 1. Inserting files into files
 
 In the file, where you want content to be inserted, insert a snippet like this
 
@@ -27,7 +33,7 @@ and the placeholder will be replaced with the content of the file. The file path
 
 If the placeholder is within an HTML or JavaScript comment without other text content, the comment part is removed when the placeholder is substituted. This enables you to put placeholders in your files without creating errors when using the files before running qutem. See example below for a demonstration.
 
-#### Usage example
+#### Example
 
 Suppose you have a file index.html with the following content
 
@@ -90,15 +96,31 @@ Now you have a new file dist/index.html with the following content
 
 Please note that the contents of the dist directory is removed completely when running qutem, so that the dist directory contains only the new file.
 
-## Getting started as developer
+### 2. Create multiple files from one content file and one template file
 
-### Prerequisites
+You have a content file containing a placeholder like this
+
+    {{placeHolder}}
+
+and a template file with placeholder values like this
+
+    placeHolder.en=placeholder
+    placeholder.de=Platzhalter
+    placeholder.it=segnaposto
+
+Running qutem results in three files in three directories "en", "de" and "it" containing the respective file with the string "{{placeHolder}}" replaced with "placeholder", "Platzhalter" and "segnaposto".
+
+# Getting started as developer
+
+## Prerequisites
 
 Dart is installed. See [https://dart.dev/get-dart](https://dart.dev/get-dart)
 
-### Project structure
+## Project structure
 
 Standard dart project structure created with [pub](https://dart.dev/tools/pub/cmd), see [https://dart.dev/tools/pub/package-layout](https://dart.dev/tools/pub/package-layout)
+
+# Miscellaneous
 
 <!-- CONTRIBUTING -->
 ## Contributing
@@ -119,7 +141,7 @@ When you decide to commit some code:
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-### Built With
+## Built With
 
 * [dart](https://dart.dev)
 

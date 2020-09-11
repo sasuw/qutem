@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'package:args/args.dart';
 import 'package:path/path.dart';
+import 'package:qutem/placeholderTemplateEngine.dart';
 import 'package:yaml/yaml.dart';
 
 import 'package:qutem/templateEngine.dart';
-import 'package:qutem/fileTemplateEngine.dart';
 
 var verboseLogging = false;
 
@@ -12,6 +12,12 @@ const arg_version = 'version';
 
 void main(List<String> args) {
   var filePath;
+
+  /*
+  args = [];
+  filePath = '/home/sasu/Projects/qutem/test/data/test2.html';
+  args.add(filePath);
+  */
 
   if (args.isEmpty) {
     stdout.writeln('Usage: qutem [INPUT FILE]');
@@ -31,7 +37,8 @@ void main(List<String> args) {
   }
 
   TemplateEngine.prepareDestinationDirectory();
-  FileTemplateEngine.run(filePath);
+  //FileTemplateEngine.run(filePath);
+  PlaceholderTemplateEngine.run(filePath);
 }
 
 String getAppVersion() {
