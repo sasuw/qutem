@@ -1,4 +1,4 @@
-## 0.3.0, September 8th, 2020
+## 0.3.0, September 11th, 2020
 
 - Support for internationalized template files
 
