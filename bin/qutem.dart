@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:args/args.dart';
 import 'package:path/path.dart';
+import 'package:qutem/fileTemplateEngine.dart';
 import 'package:qutem/placeholderTemplateEngine.dart';
 import 'package:yaml/yaml.dart';
 
@@ -37,7 +38,7 @@ void main(List<String> args) {
   }
 
   TemplateEngine.prepareDestinationDirectory();
-  //FileTemplateEngine.run(filePath);
+  FileTemplateEngine.run(filePath);
   PlaceholderTemplateEngine.run(filePath);
 }
 

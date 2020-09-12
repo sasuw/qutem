@@ -69,6 +69,9 @@ class PlaceholderTemplateEngine {
       if (!line.contains('=')) {
         continue;
       }
+      if (line.startsWith('#')) {
+        continue;
+      }
 
       //now we have a line containing something like this
       //title.en=Name of page

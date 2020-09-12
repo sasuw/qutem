@@ -1,3 +1,8 @@
+## 0.3.1, September 12th, 2020
+
+- Support for adding comments with # to template file
+- Fixed bug causing file tags not to work
+
 ## 0.3.0, September 11th, 2020
 
 - Support for internationalized template files
