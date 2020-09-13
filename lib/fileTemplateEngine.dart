@@ -6,6 +6,7 @@ import 'package:qutem/fileHandler.dart';
 
 class FileTemplateEngine {
   static final _logger = Logger('FileTemplateEngine');
+  static int replacements = 0;
 
   /// Replaces each placeholder marked with the
   /// given placeholderName with the text
@@ -19,6 +20,7 @@ class FileTemplateEngine {
       //file not found, we're not replacing anything
       return matchStr;
     }
+    FileTemplateEngine.replacements++;
     return rFile.readAsStringSync();
   }
 
@@ -35,14 +37,16 @@ class FileTemplateEngine {
           PlaceHolder(RegExp(r'(\/\/\s?{{!.*}})'), 5, 2);
       var regularPlaceHolder = PlaceHolder(RegExp(r'({{!.*}})'), 3, 2);
 
-      inputFileContent = TemplateEngine.applyTemplate(
+      var targetFileContent = TemplateEngine.applyTemplate(
           inputFileContent, htmlCommentedOutPlaceHolder, doReplacePlaceHolder);
-      inputFileContent = TemplateEngine.applyTemplate(
+      targetFileContent = TemplateEngine.applyTemplate(
           inputFileContent, jsCommentedOutPlaceHolder, doReplacePlaceHolder);
-      inputFileContent = TemplateEngine.applyTemplate(
+      targetFileContent = TemplateEngine.applyTemplate(
           inputFileContent, regularPlaceHolder, doReplacePlaceHolder);
 
-      FileHandler.writeChangedFile(filePath, inputFileContent);
+      if (targetFileContent != inputFileContent) {
+        FileHandler.writeChangedFile(filePath, targetFileContent);
+      }
     } on Exception catch (e) {
       stdout.writeln('Error.' + e.toString());
       exit(1);

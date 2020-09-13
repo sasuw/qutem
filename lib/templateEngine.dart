@@ -1,12 +1,6 @@
 import 'dart:io';
 
 class TemplateEngine {
-  static void prepareDestinationDirectory() {
-    if (Directory('dist').existsSync()) {
-      Directory('dist').deleteSync(recursive: true);
-    }
-  }
-
   static String applyTemplate(String inputFileContent, PlaceHolder placeHolder,
       Function doReplacePlaceHolder) {
     var re = placeHolder.regExp;

@@ -1,24 +1,19 @@
 import 'dart:io';
 import 'package:args/args.dart';
 import 'package:path/path.dart';
+import 'package:qutem/fileHandler.dart';
 import 'package:qutem/fileTemplateEngine.dart';
 import 'package:qutem/placeholderTemplateEngine.dart';
 import 'package:yaml/yaml.dart';
-
-import 'package:qutem/templateEngine.dart';
 
 var verboseLogging = false;
 
 const arg_version = 'version';
 
 void main(List<String> args) {
-  var filePath;
+  var stopwatch = Stopwatch()..start();
 
-  /*
-  args = [];
-  filePath = '/home/sasu/Projects/qutem/test/data/test2.html';
-  args.add(filePath);
-  */
+  var filePath;
 
   if (args.isEmpty) {
     stdout.writeln('Usage: qutem [INPUT FILE]');
@@ -37,9 +32,53 @@ void main(List<String> args) {
     exit(0);
   }
 
-  TemplateEngine.prepareDestinationDirectory();
-  FileTemplateEngine.run(filePath);
-  PlaceholderTemplateEngine.run(filePath);
+  //get category keys
+  PlaceholderTemplateEngine.prepareMappingsFromTemplateFile(filePath);
+  var categoryKeys = PlaceholderTemplateEngine.getCategoryKeys();
+
+  doFileTemplate(filePath);
+  //now we have a tmp/dest1 directory where file template engine has been applied
+
+  if (categoryKeys.isNotEmpty) {
+    //creates result documents in dist/category
+    PlaceholderTemplateEngine.run(filePath);
+
+    //copies unchanged documents (with applied file substitutions) from /tmp/dist1 directoryto dist directory
+    categoryKeys.forEach((categoryKey) {
+      var sourceDirPath = FileHandler.getTempDirPath('dist1');
+      var targetDirPath = Directory.current.path +
+          Platform.pathSeparator +
+          'dist' +
+          Platform.pathSeparator +
+          categoryKey;
+      FileHandler.copyDirectory(
+          Directory(sourceDirPath), Directory(targetDirPath), false);
+    });
+  }
+
+  var stopwatchElapsed = stopwatch.elapsedMilliseconds;
+  print(
+      'qutem finished in ${(stopwatchElapsed / 1000).toString()} s. Replaced ' +
+          FileTemplateEngine.replacements.toString() +
+          ' file placeholders and ' +
+          PlaceholderTemplateEngine.replacements.toString() +
+          ' placeholders, creating ' +
+          PlaceholderTemplateEngine.filesCreated.toString() +
+          ' files.');
+}
+
+//creates dist1 temp directory and applies file placeholder substitutions there
+void doFileTemplate(String filePath) {
+  var dist1DirPath = FileHandler.getTempDirPath('dist1');
+  FileHandler.deleteDirectory(dist1DirPath); //clean up old data
+  Directory(dist1DirPath).createSync();
+  FileHandler.copyDirectory(Directory.current, Directory(dist1DirPath), true);
+  FileHandler.deleteDirectory(
+      dist1DirPath + Platform.pathSeparator + 'dist'); //exclude dist directory
+
+  var relativeFilePath = FileHandler.getRelativeFilePath(filePath);
+  var tempFilePath = dist1DirPath + Platform.pathSeparator + relativeFilePath;
+  FileTemplateEngine.run(tempFilePath);
 }
 
 String getAppVersion() {

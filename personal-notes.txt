@@ -1,0 +1,24 @@
+1. Get list of languages
+1.5 create temp/dist
+2. a) There is at least one language: Copy all files from root to each language directory
+2. b) There are no languages: Copy all files from root to dist
+3. a) There is at least one language: Make file placeholder substitutions and copy resulting files to dist, each language directory
+3. b) There are no languages: Make file placeholder substitutions and copy resulting files to dist
+
+
+/index.html
+
+->
+
+/dist/index.html
+
+->
+
+//DEBUG START
+  args = [];
+  //filePath = '/home/sasu/Projects/qutem/test/data/test2.html';
+  filePath = '/home/sasu/Projects/secure-text-transfer-frontend/js/main.js';
+  args.add(filePath);
+  Directory.current =
+      Directory('/home/sasu/Projects/secure-text-transfer-frontend');
+//DEBUG END

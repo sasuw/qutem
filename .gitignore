@@ -13,3 +13,4 @@ dist/
 bin/qutem
 
 .vscode/
+.personal-notes.txt

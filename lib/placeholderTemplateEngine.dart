@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:logging/logging.dart';
+import 'package:qutem/fileHandler.dart';
 import 'dart:convert';
 import 'dart:core';
 
@@ -7,11 +8,23 @@ import 'package:qutem/templateEngine.dart';
 
 class PlaceholderTemplateEngine {
   static final _logger = Logger('PlaceholderTemplateEngine');
+  static int replacements = 0;
+  static int filesCreated = 0;
+
   static final categoryPlaceholderMap = {};
   static var placeHolderMap = {}; //for currently processed category
 
+  static List<String> getCategoryKeys() {
+    var categoryKeys = <String>[];
+    categoryPlaceholderMap.keys.forEach((categoryKey) {
+      categoryKeys.add(categoryKey);
+    });
+    return categoryKeys;
+  }
+
   static String doReplacePlaceHolder(placeholderName, matchStr) {
     if (placeHolderMap.containsKey(placeholderName)) {
+      PlaceholderTemplateEngine.replacements++;
       return placeHolderMap[placeholderName];
     }
 
@@ -25,25 +38,21 @@ class PlaceholderTemplateEngine {
       var file = File(filePath);
       var inputFileContent = file.readAsStringSync();
 
-      var placeHolder = PlaceHolder(RegExp(r'({{.*}})'), 2, 2);
-
-      prepareMappingsFromTemplateFile(filePath);
+      var placeHolder = PlaceHolder(RegExp(r'({{.*?}})'), 2, 2);
 
       categoryPlaceholderMap.forEach((languageKey, phMap) {
         placeHolderMap = phMap;
         var categoryFileContent = TemplateEngine.applyTemplate(
             inputFileContent, placeHolder, doReplacePlaceHolder);
 
-        var currentDirPath = Directory.current.path;
-        var relativeFilePath = filePath
-            .toString()
-            .replaceFirst(currentDirPath + Platform.pathSeparator, '');
+        var relativeFilePath = FileHandler.getRelativeFilePath(filePath);
         var categoryFilePath = 'dist' +
             Platform.pathSeparator +
             languageKey +
             Platform.pathSeparator +
             relativeFilePath;
         File(categoryFilePath).createSync(recursive: true);
+        filesCreated++;
         var categoryFile = File(categoryFilePath);
         categoryFile.writeAsStringSync(categoryFileContent);
       });
