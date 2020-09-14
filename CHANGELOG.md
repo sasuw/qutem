@@ -1,10 +1,10 @@
-## 0.4.0
+## 0.4.0, September 13th, 2020
 
-- Now dist directory existing contents are not deleted before running qutem
 - The complete source directory (i.e. also including files not touched by qutem) is now copied to the dist directory, for easier subsequent deployment of web site
+- Now dist directory existing contents are not deleted before running qutem
 - Fixed bug causing substitutions for multiple placeholders in one line to fail
 
-## 0.3.2
+## 0.3.2, September 13th, 2020
 
 - Added status output after successful run displaying elapsed time and number of replacements
 

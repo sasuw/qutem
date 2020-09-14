@@ -82,20 +82,7 @@ void doFileTemplate(String filePath) {
 }
 
 String getAppVersion() {
-  var ps = Platform.script;
-  var psRunTimeType = ps.runtimeType.toString();
-  if (psRunTimeType == '_DataUri') {
-    //code execution when running pub test
-    return '(version cannot be determined)';
-  }
-  var pathToYaml =
-      join(dirname(Platform.script.toFilePath()), '../pubspec.yaml');
-  var f = File(pathToYaml);
-  var yamlText = f.readAsStringSync();
-  var yaml = loadYaml(yamlText);
-
-  var version = yaml['version'];
-  return version;
+  return '0.4.1';
 }
 
 void log(String msg) {

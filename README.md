@@ -15,7 +15,7 @@ You can download the latest release from here: [https://github.com/sasuw/qutem/r
 
 ## Installing
 
-Unpack the tar.gz or zip file and execute the qutem from your terminal or command line window. For a more permanent installation, copy qutem e.g. to /usr/local/bin (Linux/MacOS) or to C:\Windows\system32 (Windows).
+Unpack the tar.gz or zip file and execute qutem from your terminal or command line window. For a more permanent installation, copy qutem e.g. to /usr/local/bin (Linux/MacOS) or to C:\Windows\system32 (Windows).
 
 ## Usage and functionality
 
