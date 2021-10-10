@@ -1,10 +1,8 @@
 import 'dart:io';
 import 'package:args/args.dart';
-import 'package:path/path.dart';
 import 'package:qutem/fileHandler.dart';
 import 'package:qutem/fileTemplateEngine.dart';
 import 'package:qutem/placeholderTemplateEngine.dart';
-import 'package:yaml/yaml.dart';
 
 var verboseLogging = false;
 

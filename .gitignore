@@ -14,3 +14,6 @@ bin/qutem
 
 .vscode/
 .personal-notes.txt
+
+bin/*.tar.gz
+bin/*.exe
