@@ -11,9 +11,11 @@ doc/api/
 dist/
 
 bin/qutem
+bin/qutem.dart
 
 .vscode/
 .personal-notes.txt
+project-notes.txt
 
 bin/*.tar.gz
 bin/*.exe

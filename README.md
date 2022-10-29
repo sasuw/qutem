@@ -108,6 +108,11 @@ The main executable, qutem.dart is located in the bin directory. The internal li
 
 The tests are in the test directory and the test data is in the test/data directory.
 
+## Create executable
+
+  dart pub get
+  dart compile exe bin/qutem.dart -o bin/qutem
+
 ## Running the code
 
 When you are in the project root directory, you can execute
