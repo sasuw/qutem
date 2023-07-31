@@ -1,5 +1,3 @@
-import 'dart:io';
-
 class TemplateEngine {
   static String applyTemplate(String inputFileContent, PlaceHolder placeHolder,
       Function doReplacePlaceHolder) {
