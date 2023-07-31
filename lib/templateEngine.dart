@@ -22,9 +22,9 @@ class TemplateEngine {
 }
 
 class PlaceHolder {
-  RegExp regExp;
-  int charsToCutBefore;
-  int charsToCutAfter;
+  late RegExp regExp;
+  late int charsToCutBefore;
+  late int charsToCutAfter;
 
   PlaceHolder(RegExp regExp, int charsToCutBefore, int charsToCutAfter) {
     this.regExp = regExp;

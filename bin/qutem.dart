@@ -66,7 +66,7 @@ void main(List<String> args) {
 }
 
 //creates dist1 temp directory and applies file placeholder substitutions there
-void doFileTemplate(String filePath) {
+void doFileTemplate(String? filePath) {
   var dist1DirPath = FileHandler.getTempDirPath('dist1');
   FileHandler.deleteDirectory(dist1DirPath); //clean up old data
   Directory(dist1DirPath).createSync();

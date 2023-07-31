@@ -22,7 +22,7 @@ class PlaceholderTemplateEngine {
     return categoryKeys;
   }
 
-  static String doReplacePlaceHolder(placeholderName, matchStr) {
+  static String? doReplacePlaceHolder(placeholderName, matchStr) {
     if (placeHolderMap.containsKey(placeholderName)) {
       PlaceholderTemplateEngine.replacements++;
       return placeHolderMap[placeholderName];
