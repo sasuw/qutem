@@ -1,3 +1,8 @@
+## 0.4.1, July 31st, 2023
+
+- Null-safety support to ensure compatibility with Dart 3
+- Dependency updates
+
 ## 0.4.0, September 13th, 2020
 
 - The complete source directory (i.e. also including files not touched by qutem) is now copied to the dist directory, for easier subsequent deployment of web site
