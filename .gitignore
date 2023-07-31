@@ -11,7 +11,6 @@ doc/api/
 dist/
 
 bin/qutem
-bin/qutem.dart
 
 .vscode/
 .personal-notes.txt
