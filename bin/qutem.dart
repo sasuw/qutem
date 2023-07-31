@@ -80,7 +80,7 @@ void doFileTemplate(String? filePath) {
 }
 
 String getAppVersion() {
-  return '0.4.1';
+  return '0.4.2';
 }
 
 void log(String msg) {
