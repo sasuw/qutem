@@ -110,8 +110,8 @@ The tests are in the test directory and the test data is in the test/data direct
 
 ## Create executable
 
-  dart pub get
-  dart compile exe bin/qutem.dart -o bin/qutem
+    dart pub get
+    dart compile exe bin/qutem.dart -o bin/qutem
 
 ## Running the code
 
@@ -120,7 +120,6 @@ When you are in the project root directory, you can execute
     dart bin/qutem.dart
 
 to run the program. For debugging, you can use e.g. [Visual Studio Code](https://code.visualstudio.com/).
-
 
 # Miscellaneous
 
