@@ -18,3 +18,29 @@ project-notes.txt
 
 bin/*.tar.gz
 bin/*.exe
+
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+
+#From
+#https://stackoverflow.com/questions/52286143/what-is-a-legit-gitignore-for-a-flutter-project-that-is-developed-in-android-st
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+.pub-cache/
+.pub/
+/build/
