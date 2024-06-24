@@ -1,3 +1,8 @@
+## 0.5.1, 2024
+
+- Removed mandatory `.tmpl` ending from template files (what was I thinking back then?)
+
+
 ## 0.4.1, July 31st, 2023
 
 - Null-safety support to ensure compatibility with Dart 3
