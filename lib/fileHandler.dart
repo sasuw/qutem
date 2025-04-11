@@ -47,4 +47,17 @@ class FileHandler {
       dir.deleteSync(recursive: true);
     }
   }
+
+  static String getFileName(String filePath) {
+    return path.basename(filePath);
+  }
+
+  static void copyFile(File source, File target) {
+    if (!target.parent.existsSync()) {
+      target.parent.createSync(recursive: true);
+    }
+    source.copySync(target.path);
+  }
+
+
 }

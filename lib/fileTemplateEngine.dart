@@ -24,20 +24,22 @@ class FileTemplateEngine {
     return rFile.readAsStringSync();
   }
 
-  static void run(outputFilePath) {
+  static void run(String inputFilePath, String outputFilePath) {
     try {
-      _logger.fine('Input file: ' + outputFilePath);
+      _logger.fine('Input file: ' + inputFilePath);
 
-      var inputFile = File(outputFilePath);
-      var inputFileContent = inputFile.readAsStringSync();
+      final inputFile = File(inputFilePath);
+      final inputFileContent = inputFile.readAsStringSync();
 
-      var htmlCommentedOutPlaceHolder =
+      final htmlCommentedOutPlaceHolder =
           PlaceHolder(RegExp(r'(<!--\s?{{!.*}}\s?-->)'), 7, 5);
-      var jsCommentedOutPlaceHolder =
+      final jsCommentedOutPlaceHolder =
           PlaceHolder(RegExp(r'(\/\/\s?{{!.*}})'), 5, 2);
-      var regularPlaceHolder = PlaceHolder(RegExp(r'({{!.*}})'), 3, 2);
+      final regularPlaceHolder = PlaceHolder(RegExp(r'({{!.*}})'), 3, 2);
 
-      var targetFileContent = TemplateEngine.applyTemplate(
+      String targetFileContent = TemplateEngine.applyTemplate(
+          inputFileContent, htmlCommentedOutPlaceHolder, doReplacePlaceHolder);
+      targetFileContent = TemplateEngine.applyTemplate(
           inputFileContent, htmlCommentedOutPlaceHolder, doReplacePlaceHolder);
       targetFileContent = TemplateEngine.applyTemplate(
           inputFileContent, jsCommentedOutPlaceHolder, doReplacePlaceHolder);

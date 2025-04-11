@@ -5,105 +5,140 @@ import 'package:qutem/fileTemplateEngine.dart';
 import 'package:qutem/placeholderTemplateEngine.dart';
 import 'package:yaml/yaml.dart';
 
-var verboseLogging = false;
-
 const arg_version = 'version';
 
-void main(List<String> args) {
-  var stopwatch = Stopwatch()..start();
-
-  var inputFilePath;
+/// The function your tests can call.
+/// Returns an integer exit code:
+///   0 => success
+///   non-zero => error
+int run(List<String> args) {
+  final stopwatch = Stopwatch()..start();
 
   if (args.isEmpty || args.length > 2) {
     stdout.writeln('Usage: qutem <input file> [output file]');
     stdout.writeln(
-        'Replaces template placeholders in given input file with contents of file given in placeholder and writes the new content to dist/ directory');
-    exit(0);
-  } else {
-    inputFilePath = args[0];
-  }
-  var outputFilePath = 'dist' + Platform.pathSeparator + inputFilePath;
-  if(args.length == 2){
-    outputFilePath = args[1];
+        'Replaces template placeholders in given input file with contents of file given in placeholder and writes the new content to the output file or dist directory.');
+    // For "usage" we might consider returning 0 or 1. Up to you:
+    return 0;
   }
 
   final parser = ArgParser()..addFlag(arg_version, negatable: false, abbr: 'v');
-  var argResults = parser.parse(args);
+  final argResults = parser.parse(args);
   if (argResults[arg_version]) {
-    var version = getAppVersion();
-    stdout.writeln('qutem ' + version + ' (quick template engine)');
-    exit(0);
+    final version = getAppVersion();
+    stdout.writeln('qutem $version (quick template engine)');
+    // Showing version is not really an error, so:
+    return 0;
   }
 
-  //get category keys
-  PlaceholderTemplateEngine.prepareMappingsFromTemplateFile(inputFilePath);
-  var categoryKeys = PlaceholderTemplateEngine.getCategoryKeys();
+  final inputFilePath = args[0];
+  String? outputFilePath = (args.length == 2) ? args[1] : null;
 
-  doFileTemplate(inputFilePath);
-  //now we have a tmp/dest1 directory where file template engine has been applied
-
-  if (categoryKeys.isNotEmpty) {
-    //creates result documents in dist/category
-    PlaceholderTemplateEngine.run(inputFilePath);
-
-    //copies unchanged documents (with applied file substitutions) from /tmp/dist1 directoryto dist directory
-    categoryKeys.forEach((categoryKey) {
-      var sourceDirPath = FileHandler.getTempDirPath('dist1');
-      var targetDirPath = Directory.current.path +
-          Platform.pathSeparator +
-          'dist' +
-          Platform.pathSeparator +
-          categoryKey;
-      FileHandler.copyDirectory(
-          Directory(sourceDirPath), Directory(targetDirPath), false);
-    });
+  if (inputFilePath.isEmpty) {
+    stdout.writeln('Input file not provided.');
+    return 1; // error
   }
 
-  var stopwatchElapsed = stopwatch.elapsedMilliseconds;
-  print(
-      'qutem finished in ${(stopwatchElapsed / 1000).toString()} s. Replaced ' +
-          FileTemplateEngine.replacements.toString() +
-          ' file placeholders and ' +
-          PlaceholderTemplateEngine.replacements.toString() +
-          ' placeholders, creating ' +
-          PlaceholderTemplateEngine.filesCreated.toString() +
-          ' files.');
-}
-
-//creates dist1 temp directory and applies file placeholder substitutions there
-void doFileTemplate(String? filePath) {
-  //TODO: wtf is this, rewrite
-  var dist1DirPath = FileHandler.getTempDirPath('qutem');
-  FileHandler.deleteDirectory(dist1DirPath); //clean up old data
-  Directory(dist1DirPath).createSync();
-  FileHandler.copyDirectory(Directory.current, Directory(dist1DirPath), true);
-  FileHandler.deleteDirectory(
-      dist1DirPath + Platform.pathSeparator + 'dist'); //exclude dist directory
-
-  var relativeFilePath = FileHandler.getRelativeFilePath(filePath);
-  var tempFilePath = dist1DirPath + Platform.pathSeparator + relativeFilePath;
-  FileTemplateEngine.run(tempFilePath);
-}
-
-String getAppVersion() {
-    final file = File('pubspec.yaml');
-    if (!file.existsSync()) {
-      return "0";
+  // Validate outputFilePath if provided
+  if (outputFilePath != null) {
+    if (!outputFilePath.endsWith('.html') && !outputFilePath.endsWith('.js')) {
+      stdout.writeln(
+          'Output file must have .html or .js extension. Current $outputFilePath');
+      return 1; // error
     }
+  }
 
-    // Read the file content
-    final content = file.readAsStringSync();
+  // If the input file is missing, return 1. 
+  // (Your old code just didn't test for file existence before continuing.)
+  if (!File(inputFilePath).existsSync()) {
+    stdout.writeln('Error: file "$inputFilePath" does not exist.');
+    return 1;
+  }
 
-    // Parse the YAML content
-    final yamlMap = loadYaml(content);
+  try {
+    if (outputFilePath != null) {
+      doFileTemplate(inputFilePath, outputFilePath);
+    } else {
+      // get category keys
+      PlaceholderTemplateEngine.prepareMappingsFromTemplateFile(inputFilePath);
+      final categoryKeys = PlaceholderTemplateEngine.getCategoryKeys();
 
-    // Extract the version
-    final version = yamlMap['version'];
-    return version;
+      final tempOutputFilePath = 'dist${Platform.pathSeparator}$inputFilePath';
+      doFileTemplate(inputFilePath, tempOutputFilePath);
+      // now we have file template applied to the file in the dist dir
+
+      if (categoryKeys.isNotEmpty) {
+        // creates result documents in dist/category
+        PlaceholderTemplateEngine.run(inputFilePath);
+
+        // copies unchanged documents (with applied file substitutions) 
+        // from temp dir to dist/categoryKey/...
+        for (final categoryKey in categoryKeys) {
+          final sourceFilePath = tempOutputFilePath;
+          final targetFilePath = Directory.current.path +
+              Platform.pathSeparator +
+              'dist' +
+              Platform.pathSeparator +
+              categoryKey +
+              Platform.pathSeparator +
+              FileHandler.getFileName(inputFilePath);
+
+          // Create the target directory if it doesn't exist
+          final targetDir = Directory(
+              '${Directory.current.path}${Platform.pathSeparator}dist${Platform.pathSeparator}$categoryKey');
+          if (!targetDir.existsSync()) {
+            targetDir.createSync(recursive: true);
+          }
+
+          FileHandler.copyFile(File(sourceFilePath), File(targetFilePath));
+        }
+      } else {
+        print('No categories found, no need to copy files.');
+      }
+    }
+  } catch (e) {
+    stdout.writeln('Error: $e');
+    return 1; // return error
+  }
+
+  final stopwatchElapsed = stopwatch.elapsedMilliseconds;
+  print(
+    'qutem finished in ${(stopwatchElapsed / 1000).toString()} s. Replaced '
+    '${FileTemplateEngine.replacements} file placeholders and '
+    '${PlaceholderTemplateEngine.replacements} placeholders, creating '
+    '${PlaceholderTemplateEngine.filesCreated}'
+    '${outputFilePath == null ? ' files.' : ' file.'}'
+  );
+
+  return 0; // success
 }
 
-void log(String msg) {
-  if (verboseLogging) {
-    stdout.writeln(msg);
+/// The main entry point that CLI calls. This calls [run()] 
+/// and then calls [exit()] with the returned code.
+void main(List<String> args) {
+  final exitCode = run(args);
+  if (exitCode != 0) {
+    exit(exitCode);
   }
+}
+
+/// Helper to apply the FileTemplateEngine
+/// to a file path => output file path.
+void doFileTemplate(String filePath, String outputFilePath) {
+  final inputFile = File(filePath);
+  final outputFile = File(outputFilePath);
+
+  FileTemplateEngine.run(inputFile.path, outputFile.path);
+}
+
+/// Example of reading pubspec.yaml. 
+/// If you don't have one, or if it's in a different location, adjust accordingly.
+String getAppVersion() {
+  final file = File('pubspec.yaml');
+  if (!file.existsSync()) {
+    return "0";
+  }
+  final doc = loadYaml(file.readAsStringSync()) as YamlMap?;
+  if (doc == null) return "0";
+  return doc['version']?.toString() ?? '0';
 }
