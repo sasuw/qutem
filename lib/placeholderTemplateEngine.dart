@@ -64,7 +64,7 @@ class PlaceholderTemplateEngine {
 
   //Prepares a map of categories to key/value maps
   static void prepareMappingsFromTemplateFile(filePath) {
-    var templateFilePath = filePath + '.tmpl';
+    var templateFilePath = filePath;
     var templateFile = File(templateFilePath);
     var templateFileContent = templateFile.readAsStringSync();
 

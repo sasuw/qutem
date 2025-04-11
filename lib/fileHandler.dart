@@ -2,8 +2,7 @@ import 'dart:io';
 import 'package:path/path.dart' as path;
 
 class FileHandler {
-  static void writeChangedFile(String filePath, String newFileContent) {
-    var distFilePath = 'dist' + Platform.pathSeparator + filePath;
+  static void writeChangedFile(String distFilePath, String newFileContent) {
     File(distFilePath).createSync(recursive: true);
     var distFile = File(distFilePath);
     distFile.writeAsStringSync(newFileContent);

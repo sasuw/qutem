@@ -24,11 +24,11 @@ class FileTemplateEngine {
     return rFile.readAsStringSync();
   }
 
-  static void run(filePath) {
+  static void run(outputFilePath) {
     try {
-      _logger.fine('Input file: ' + filePath);
+      _logger.fine('Input file: ' + outputFilePath);
 
-      var inputFile = File(filePath);
+      var inputFile = File(outputFilePath);
       var inputFileContent = inputFile.readAsStringSync();
 
       var htmlCommentedOutPlaceHolder =
@@ -45,7 +45,7 @@ class FileTemplateEngine {
           inputFileContent, regularPlaceHolder, doReplacePlaceHolder);
 
       if (targetFileContent != inputFileContent) {
-        FileHandler.writeChangedFile(filePath, targetFileContent);
+        FileHandler.writeChangedFile(outputFilePath, targetFileContent);
       }
     } on Exception catch (e) {
       stdout.writeln('Error.' + e.toString());
