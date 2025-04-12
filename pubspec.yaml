@@ -10,6 +10,8 @@ dependencies:
   yaml: ^3.1.2
   args: ^2.4.2
 
+  logging: any
+  path: any
 dev_dependencies:
   lints: ^5.0.0
   test: ^1.25.9

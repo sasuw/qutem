@@ -18,8 +18,7 @@ int run(List<String> args) {
     stdout.writeln('Usage: qutem <input file> [output file]');
     stdout.writeln(
         'Replaces template placeholders in given input file with contents of file given in placeholder and writes the new content to the output file or dist directory.');
-    // For "usage" we might consider returning 0 or 1. Up to you:
-    return 0;
+    return 1;
   }
 
   final parser = ArgParser()..addFlag(arg_version, negatable: false, abbr: 'v');
@@ -27,7 +26,6 @@ int run(List<String> args) {
   if (argResults[arg_version]) {
     final version = getAppVersion();
     stdout.writeln('qutem $version (quick template engine)');
-    // Showing version is not really an error, so:
     return 0;
   }
 
@@ -51,7 +49,7 @@ int run(List<String> args) {
   // If the input file is missing, return 1. 
   // (Your old code just didn't test for file existence before continuing.)
   if (!File(inputFilePath).existsSync()) {
-    stdout.writeln('Error: file "$inputFilePath" does not exist.');
+    stdout.writeln('xError: file "$inputFilePath" does not exist.');
     return 1;
   }
 

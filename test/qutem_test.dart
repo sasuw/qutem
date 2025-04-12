@@ -1,14 +1,10 @@
 import 'dart:io';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
 import '../bin/qutem.dart' as qx;
 import '../lib/fileHandler.dart';
 import '../lib/fileTemplateEngine.dart';
 
-@GenerateMocks([FileHandler])
-import 'qutem_test.mocks.dart';
 
 void main() {
   group('FileHandler', () {
